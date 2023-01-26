@@ -7,13 +7,14 @@ class FaceDetect:
         self.confidence_threshold = confidence_threshold
         self.mtcnn = MTCNN(keep_all=True, device=device)
     def detect(self,frame):
+        boxes = []
+        conf = []
         boxes, conf = self.mtcnn.detect(frame)
         numFaces = 0
-        if conf[0]==None:
-            return numFaces 
-        for i in conf:
-            if i > self.confidence_threshold:
-                numFaces+=1
+        if conf[0]!=None:
+            for i in conf:
+                if i > self.confidence_threshold:
+                    numFaces+=1
         return (numFaces, conf ,boxes)
 
 
