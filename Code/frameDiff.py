@@ -16,3 +16,7 @@ class FrameDiff:
 # img1 = cv2.resize(cv2.imread("/home/siddharth/Downloads/Sunflower_from_Silesia2.jpg"),(300,300))
 # img2 = cv2.resize(cv2.imread("/home/siddharth/Downloads/images.jpeg"),(300,300))
 # print(fd.ssim(img1,img1))
+
+
+
+
