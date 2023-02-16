@@ -11,7 +11,7 @@ from input import clickInput
 clickInput()
 
 
-
+antiSpoof = Antispoof()
 diff = FrameDiff(0.92)
 detect = FaceDetect(0.50,"cpu")
 rec = FaceRecog(threshold = 0.3, metric = "cosine")
@@ -28,6 +28,7 @@ def runPipeline(video=0,source = "../Data/user.png"):
     noFaceCount = 0
     multipleFaceCount = 0
     unverifiedFaceCount = 0
+    spoofedFaceCount=0
     outputStr = "{}, {}, {}\n"
     file = open("pipeline_output.txt","w")
     start_time =time.time()
@@ -52,6 +53,13 @@ def runPipeline(video=0,source = "../Data/user.png"):
                         cv2.putText(curr_frame, 'Face Verified', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
                         print("face is verified", distance)
                         #antispoof
+                        spoof_result = antiSpoof.predict_spoof(curr_frame)
+                        if spoof_result[0]==2:
+                            print("face is Fake", spoof_result[1])
+                            cv2.putText(curr_frame, 'Spoofed Face Detected', (0,45), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                            file.write(outputStr.format("Spoofed Face Detected",frameCount,time.time()-start_time))
+                            spoofedFaceCount+=1
+
                     else:
                         cv2.putText(curr_frame, 'Face Not Verified', (0,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
                         print("face is not verified", distance)
@@ -86,12 +94,10 @@ def runPipeline(video=0,source = "../Data/user.png"):
     file.write("1. Missing Face: "+str(noFaceCount)+"\n")
     file.write("2. Multiple Faces in Frame: "+str(multipleFaceCount)+"\n")
     file.write("3. Unverified User: "+ str(unverifiedFaceCount)+"\n")
+    file.write("4. Spoofed Face Count: "+ str(spoofedFaceCount)+"\n")
     file.close()
     cap.release()
     cv2.destroyAllWindows()
     
 runPipeline()
-# print("diff",diff.ssim(img1,img2))
-# print("detect",detect.detect(img3))
-# print("rec",rec.verify(img1,img2))
 
